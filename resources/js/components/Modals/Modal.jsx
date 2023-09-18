@@ -28,7 +28,7 @@ export default function Modal({ onClose, isOpen, label, children }) {
                                 {label}
                             </h1>
                             <SquareButton
-                                icon={<X size={24} weight="bold" />}
+                                icon={<X size={20} weight="bold" />}
                                 onClick={onClose}
                             />
                         </div>

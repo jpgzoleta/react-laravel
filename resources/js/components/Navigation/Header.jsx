@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import NavLink from "./NavLink";
+import { House, SignOut, Bag } from "@phosphor-icons/react";
 
 function Header() {
     return (
@@ -10,10 +11,22 @@ function Header() {
                 <span className="text-[#F05340] italic">Laravel</span>
             </Link>
             <ul className="flex items-center gap-4">
-                <NavLink to="/" name="Home" />
-                <NavLink to="/products" name="Products" />
+                <NavLink
+                    to="/"
+                    name="Home"
+                    icon={<House size={18} className="text-gray-500" />}
+                />
+                <NavLink
+                    to="/products"
+                    name="Products"
+                    icon={<Bag size={18} className="text-gray-500" />}
+                />
                 <div className="border-gray-300 border-l w-[1px] h-[20px]"></div>
-                <NavLink to="/login" name="Logout" />
+                <NavLink
+                    to="/login"
+                    name="Logout"
+                    icon={<SignOut size={18} className="text-gray-500" />}
+                />
             </ul>
         </nav>
     );

@@ -1,9 +1,4 @@
-import {
-    DropdownSelect,
-    InputField,
-    RadioSelect,
-    RadioSelectItem,
-} from "../Inputs";
+import { InputField, TextArea } from "../Inputs";
 import { MyButton } from "../Buttons";
 import { FormikProvider, Form, useFormik } from "formik";
 import { productSchema } from "../../lib/validators/product-validator";
@@ -71,12 +66,12 @@ export default function ProductForm({
             <Form className="flex w-full flex-col gap-8">
                 <div className="flex w-full flex-col gap-6">
                     <InputField label="Name" name="name" />
-                    <InputField type="details" label="Details" name="details" />
+                    <TextArea label="Details" name="details" />
                     <InputField
                         type="number"
                         label="Price in PHP."
                         name="price"
-                        min={0}
+                        min={1}
                     />
                     <div className="flex justify-end gap-2">
                         <MyButton secondary onClick={onCancel}>

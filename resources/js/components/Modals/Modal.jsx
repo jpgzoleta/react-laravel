@@ -8,7 +8,7 @@ export default function Modal({ onClose, isOpen, label, children }) {
     ReactModal.setAppElement("body");
     const modalRef = useRef();
     return (
-        <RemoveScroll enabled={isOpen}>
+        <RemoveScroll enabled={isOpen} removeScrollBar={false}>
             <ReactModal
                 ref={modalRef}
                 // contentLabel="Offer Modal"

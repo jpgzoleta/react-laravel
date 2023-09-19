@@ -1,28 +1,61 @@
 import { useTable } from "react-table";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ActionButton } from "../Buttons";
 import { ProductForm } from "../Forms";
 import { Pencil, Trash } from "@phosphor-icons/react";
 import classNames from "classnames";
 import React from "react";
 import { Modal, Confirmation } from "../Modals";
-import { StatusBadge } from "../Misc";
-import useSWR from "swr";
 import axios from "axios";
 import toast from "react-hot-toast";
-import products from "../../data/test-data/products";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
-const fetcher = (url) =>
-    axios
-        .get(url, {
-            headers: {
-                Authorization: "EBd0JOSDB64s8udwNDrSobA1VV1A99dr1wtAbh3oMbk=",
-                // "content-type": "application/json",
-            },
-        })
-        .then((res) => res.data);
+/**
+ * Create a single table row loader
+ * @returns {JSX.Element}
+ */
 
-export default function ProductsTable({ data = [], mutate = () => {} }) {
+function Loader() {
+    return (
+        <SkeletonTheme baseColor="#cbd5e1" highlightColor="#e2e8f0" inline>
+            <tr className="border-gray-200 border-b">
+                <td className="p-4">
+                    <Skeleton containerClassName="flex items-start" />
+                </td>
+                <td className="p-4 min-w-[150px] max-w-[200px]">
+                    <Skeleton containerClassName="flex items-start" />
+                </td>
+                <td className="p-4 min-w-[250px]">
+                    <Skeleton
+                        count={2}
+                        containerClassName="flex flex-col gap-1 justify-start"
+                    />
+                </td>
+                <td className="p-4">
+                    <Skeleton containerClassName="flex items-start" />
+                </td>
+                <td className="p-4">
+                    <Skeleton
+                        style={{
+                            width: 24,
+                            height: 24,
+                        }}
+                        count={2}
+                        containerClassName="flex gap-2 items-center justify-center"
+                        className="w-[24px] h-[24px]"
+                    />
+                </td>
+            </tr>
+        </SkeletonTheme>
+    );
+}
+
+export default function ProductsTable({
+    data = [],
+    mutate = () => {},
+    isLoading = false,
+    isValidating = false,
+}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [toEditData, setToEditData] = useState(null);
     const [toDeleteId, setToDeleteId] = useState(null);
@@ -84,25 +117,21 @@ export default function ProductsTable({ data = [], mutate = () => {} }) {
         []
     );
 
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        rows,
-        prepareRow,
-        visibleColumns,
-    } = useTable({ columns, data: docs });
+    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+        useTable({ columns, data: docs });
 
     function handleDelete() {
         axios
-            .delete(`http://10.101.96.224/users/${toDeleteId}/delete`, {
-                headers: {
-                    Authorization:
-                        "EBd0JOSDB64s8udwNDrSobA1VV1A99dr1wtAbh3oMbk=",
-                },
-            })
+            .delete(`/api/products/${toDeleteId}`)
             .then((res) => {
-                toast.success(res?.data?.message), mutate();
+                if (res.data?.success) {
+                    toast.success(res?.data?.message);
+                    setToDeleteId(null);
+                    setIsConfirmationOpen(false);
+                    mutate();
+                } else {
+                    toast.error(res.data?.message);
+                }
             })
             .catch((error) => console.log(error));
     }
@@ -125,6 +154,7 @@ export default function ProductsTable({ data = [], mutate = () => {} }) {
                 isOpen={isModalOpen}
                 onClose={() => {
                     setIsModalOpen(false);
+                    setToEditData(null);
                 }}
             >
                 <ProductForm
@@ -133,7 +163,11 @@ export default function ProductsTable({ data = [], mutate = () => {} }) {
                         setToEditData(null);
                         setIsModalOpen(false);
                     }}
-                    onAfterSubmit={mutate}
+                    onAfterSubmit={() => {
+                        setToEditData(null);
+                        setIsModalOpen(false);
+                        mutate();
+                    }}
                 />
             </Modal>
             <div
@@ -167,60 +201,50 @@ export default function ProductsTable({ data = [], mutate = () => {} }) {
                         ))}
                     </thead>
                     <tbody {...getTableBodyProps()}>
-                        {rows.map((row, index) => {
-                            prepareRow(row);
-                            return (
-                                <React.Fragment key={row.original.id}>
-                                    <tr
-                                        // key={row.original._id}
-                                        {...row.getRowProps()}
-                                        className={classNames(
-                                            "cursor-pointer border-y border-gray-200 transition-colors hover:bg-blue-100"
-                                        )}
-                                    >
-                                        {row.cells.map((cell, index) => {
-                                            if (
-                                                cell.column.Header == "Status"
-                                            ) {
-                                                return (
-                                                    <td
-                                                        key={index}
-                                                        {...cell.getCellProps()}
-                                                        className={classNames(
-                                                            "p-4"
-                                                        )}
-                                                    >
-                                                        <StatusBadge
-                                                            status={cell.value}
-                                                        />
-                                                    </td>
-                                                );
-                                            } else {
-                                                return (
-                                                    <td
-                                                        key={index}
-                                                        {...cell.getCellProps()}
-                                                        className={classNames(
-                                                            "p-4",
-                                                            {
-                                                                "whitespace-nowrap text-center font-semibold uppercase":
-                                                                    index == 0,
-                                                                "min-w-[150px] max-w-[200px]":
-                                                                    index == 1,
-                                                                "min-w-[250px]":
-                                                                    index == 2,
-                                                            }
-                                                        )}
-                                                    >
-                                                        {cell.render("Cell")}
-                                                    </td>
-                                                );
-                                            }
-                                        })}
-                                    </tr>
-                                </React.Fragment>
-                            );
-                        })}
+                        {isLoading && isValidating
+                            ? [...Array(10)].map((index) => (
+                                  <Loader key={index} />
+                              ))
+                            : rows.map((row, index) => {
+                                  prepareRow(row);
+                                  return (
+                                      <React.Fragment key={row.original.id}>
+                                          <tr
+                                              // key={row.original._id}
+                                              {...row.getRowProps()}
+                                              className={classNames(
+                                                  "cursor-pointer border-y border-gray-200 transition-colors hover:bg-blue-100"
+                                              )}
+                                          >
+                                              {row.cells.map((cell, index) => {
+                                                  return (
+                                                      <td
+                                                          key={index}
+                                                          {...cell.getCellProps()}
+                                                          className={classNames(
+                                                              "p-4",
+                                                              {
+                                                                  "whitespace-nowrap text-center font-semibold uppercase":
+                                                                      index ==
+                                                                      0,
+                                                                  "min-w-[150px] max-w-[200px]":
+                                                                      index ==
+                                                                      1,
+                                                                  "min-w-[250px]":
+                                                                      index ==
+                                                                      2,
+                                                              }
+                                                          )}
+                                                      >
+                                                          {cell.render("Cell")}
+                                                      </td>
+                                                  );
+                                              })}
+                                          </tr>
+                                      </React.Fragment>
+                                  );
+                              })}
+                        {/* {} */}
                     </tbody>
                 </table>
             </div>

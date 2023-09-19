@@ -30,8 +30,6 @@ function Products() {
         limit: 10,
     });
 
-    console.log(docs, pageData);
-
     return (
         <>
             <Modal
@@ -42,7 +40,10 @@ function Products() {
                 }}
             >
                 <ProductForm
-                    onAfterSubmit={() => setIsModalOpen(false)}
+                    onAfterSubmit={() => {
+                        mutate();
+                        setIsModalOpen(false);
+                    }}
                     onCancel={() => setIsModalOpen(false)}
                 />
             </Modal>

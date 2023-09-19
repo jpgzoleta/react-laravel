@@ -40,18 +40,16 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $product = Product::insertGetId(
-            [
-                'name' => $request->name,
-                'details' => $request->details,
-                'price' => $request->price,
-                'created_at' => Carbon::now()
-            ]
-        );
+        $product = new Product();
+
+        $product->name = $request->name;
+        $product->price = $request->price;
+        $product->details = $request->details;
+        $product->save();
 
         return response()->json([
             'success' => true,
-            'product_id' => $product,
+            'product_id' => $product->id,
             'message' => 'Product saved!'
         ]);
     }

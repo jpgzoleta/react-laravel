@@ -6,10 +6,8 @@ import { Pencil, Trash } from "@phosphor-icons/react";
 import classNames from "classnames";
 import React from "react";
 import { Modal, Confirmation } from "../Modals";
-import { StatusBadge } from "../Misc";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { TableRowSkeleton } from "../Loaders";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
 /**

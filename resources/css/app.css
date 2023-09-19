@@ -15,12 +15,12 @@
     }
 
     .paginate-button {
-        @apply flex gap-2 rounded-lg border border-gray-300 px-3 py-2 hover:bg-gray-100 hover:text-blue-700;
+        @apply flex gap-2 rounded-lg border border-gray-300 px-3 py-2 hover:border-blue-300 hover:bg-blue-200 hover:text-blue-900;
     }
 
     .paginate-link {
         @apply flex min-w-[30px] items-center justify-center rounded-lg border border-gray-300 
-        px-2 py-2 text-center hover:bg-gray-100;
+        px-2 py-2 text-center hover:bg-blue-200 hover:text-blue-900 hover:border-blue-300;
     }
 
     .paginate-link-active {
@@ -32,6 +32,10 @@
     }
 
     .paginate-link-disabled {
-        @apply cursor-default text-gray-300 hover:bg-white hover:text-gray-300;
+        @apply cursor-default text-gray-300 hover:bg-white hover:text-gray-300 hover:border-gray-300;
+    }
+
+    .paginate-button-disabled {
+        @apply cursor-default text-gray-300 hover:bg-white hover:text-gray-300 hover:border-gray-300;
     }
 }

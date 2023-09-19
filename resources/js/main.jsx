@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Products from "./pages/Products";
 import "../css/app.css";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const router = createBrowserRouter([
     {

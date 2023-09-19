@@ -4,7 +4,6 @@ import { FormikProvider, Form, useFormik } from "formik";
 import { productSchema } from "../../lib/validators/product-validator";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useState, useEffect } from "react";
 
 export default function ProductForm({
     onAfterSubmit = () => {},
@@ -24,30 +23,16 @@ export default function ProductForm({
     async function handleSubmit(values) {
         try {
             let response;
-            if (user) {
+            if (product) {
                 response = await axios.put(
-                    "http://10.101.96.224/users/update",
-                    { id: user.id, ...values },
-                    {
-                        headers: {
-                            Authorization:
-                                "EBd0JOSDB64s8udwNDrSobA1VV1A99dr1wtAbh3oMbk=",
-                        },
-                    }
+                    `/api/products/${product?.id}`,
+                    values,
+                    {}
                 );
             } else {
-                response = await axios.post(
-                    "http://10.101.96.224/users/save",
-                    values,
-                    {
-                        headers: {
-                            Authorization:
-                                "EBd0JOSDB64s8udwNDrSobA1VV1A99dr1wtAbh3oMbk=",
-                        },
-                    }
-                );
+                response = await axios.post("/api/products", values, {});
             }
-            if (response.data?.status == "Success") {
+            if (response.data?.success) {
                 toast.success(response.data?.message);
             } else {
                 toast.error(response.data?.message);
@@ -71,6 +56,7 @@ export default function ProductForm({
                         type="number"
                         label="Price in PHP."
                         name="price"
+                        step="0.01"
                         min={1}
                     />
                     <div className="flex justify-end gap-2">

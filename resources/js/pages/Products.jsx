@@ -17,7 +17,15 @@ function Products() {
         return () => {};
     }, []);
 
-    const { docs, error, mutate, pageData, setPageIndex } = usePaginate({
+    const {
+        docs,
+        error,
+        mutate,
+        pageData,
+        setPageIndex,
+        isLoading,
+        isValidating,
+    } = usePaginate({
         url: "/api/products",
         limit: 10,
     });
@@ -49,7 +57,12 @@ function Products() {
                             <p>New Product</p>
                         </MyButton>
                     </div>
-                    <ProductsTable data={docs} mutate={mutate} />
+                    <ProductsTable
+                        data={docs}
+                        mutate={mutate}
+                        isLoading={isLoading}
+                        isValidating={isValidating}
+                    />
                     <ReactPaginate
                         breakLabel="..."
                         nextLabel="next >"
